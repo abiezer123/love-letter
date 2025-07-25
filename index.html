@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Letter to Mom & Dad 💌</title>
   <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+  <script>
+    emailjs.init("YOUR_PUBLIC_KEY"); // <-- Replace with your EmailJS Public Key
+  </script>
 </head>
 <body>
   <div class="envelope-container" id="envelope-container">
@@ -17,9 +21,15 @@
   </div>
 
   <div class="message-container hidden" id="message-container">
-    <div class="burst" id="burst-container"></div>
+    <div class="rain" id="emoji-rain"></div>
     <h1>To My Dearest Parents ❤️</h1>
     <p id="message-text"></p>
+
+    <div class="love-response">
+      <h3>Do you love me too? 🥹❤️</h3>
+      <input type="text" id="loveReply" placeholder="Type your answer here..." />
+      <button onclick="sendLoveReply()">Send 💌</button>
+    </div>
   </div>
 
   <script src="script.js"></script>
