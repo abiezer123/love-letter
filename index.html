@@ -4,11 +4,131 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Letter to Mom & Dad 💌</title>
-  <link rel="stylesheet" href="style.css" />
-  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
-  <script>
-    emailjs.init("service_d8inoee"); // <-- Replace with your EmailJS Public Key
-  </script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Comic Sans MS', cursive;
+      background: linear-gradient(to right, #ffdde1, #ee9ca7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .envelope-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .envelope {
+      width: 200px;
+      height: 120px;
+      background: #fff0f5;
+      position: relative;
+      border: 2px solid #e91e63;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      transition: transform 0.5s ease;
+    }
+
+    .envelope:hover {
+      transform: scale(1.05);
+    }
+
+    .flap {
+      width: 0;
+      height: 0;
+      border-left: 100px solid transparent;
+      border-right: 100px solid transparent;
+      border-bottom: 60px solid #e91e63;
+      position: absolute;
+      top: -60px;
+      left: 0;
+      z-index: 2;
+    }
+
+    .body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      z-index: 1;
+      font-weight: bold;
+      color: #e91e63;
+      font-size: 1.2em;
+    }
+
+    .message-container {
+      text-align: center;
+      padding: 20px;
+      max-width: 600px;
+      color: #333;
+      animation: fadeIn 1s ease-in-out forwards;
+      position: relative;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .message-container h1 {
+      color: #d81b60;
+      margin-bottom: 15px;
+    }
+
+    .emoji-drop {
+      position: absolute;
+      font-size: 1.8rem;
+      animation: drop 4s linear infinite;
+      opacity: 0.9;
+    }
+
+    @keyframes drop {
+      0% {
+        transform: translateY(-100px);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(110vh);
+        opacity: 0;
+      }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    input, button {
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      margin: 5px;
+      font-size: 1em;
+    }
+
+    button {
+      background-color: #e91e63;
+      color: white;
+      cursor: pointer;
+    }
+
+    #emoji-rain {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+  </style>
 </head>
 <body>
   <div class="envelope-container" id="envelope-container">
@@ -21,17 +141,108 @@
   </div>
 
   <div class="message-container hidden" id="message-container">
-    <div class="rain" id="emoji-rain"></div>
+    <div id="emoji-rain"></div>
     <h1>To My Dearest Parents ❤️</h1>
     <p id="message-text"></p>
 
-    <div class="love-response">
-    <h3>Do you love me too? 🥹❤️</h3>
-    <input type="text" id="loveReply" placeholder="Type your answer here..." />
-    <button onclick="sendLoveReply()">Send 💌</button>
+    <div class="love-response hidden" id="love-response" style="margin-top: 20px;">
+      <h3>Do you love me too? 🥹❤️</h3>
+      <input type="text" id="loveReply" placeholder="Type your answer here..." />
+      <button onclick="sendLoveReply()">Send 💌</button>
     </div>
+  </div>
 
+<!-- EmailJS SDK v4 via UMD build (NOT ES Module) -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
-  <script src="script.js"></script>
+<script>
+  // Initialize EmailJS
+  emailjs.init("7chP_hAHlAjci0oHw"); // Replace with your public key
+
+ const message = "Thank you for the countless sacrifices, unconditional love, and never-ending support you've given me. Thank you for guiding me closer to God and showing me what faith looks like in action. Your wisdom, love, and patience are gifts I treasure deeply. I love you more than words could ever express. 💖 I know I haven’t always been the best son, but I truly want to become better — with the help of the Lord. I love you so much. I’m incredibly thankful that God gave me parents like you. You are truly the best — my safe place, my comfort, and a reflection of His grace.";
+
+  let i = 0;
+
+  function openLetter() {
+    document.getElementById("envelope-container").style.display = "none";
+    const msgContainer = document.getElementById("message-container");
+    msgContainer.classList.remove("hidden");
+
+    startEmojiRain();
+    typeMessage();
+  }
+
+function typeMessage() {
+  const msgText = document.getElementById("message-text");
+  const loveResponse = document.getElementById("love-response");
+
+  function type() {
+    if (i < message.length) {
+      msgText.innerHTML += message.charAt(i);
+      i++;
+      setTimeout(type, 40);
+    } else {
+      // Show the "Do you love me too?" input AFTER message is done
+      loveResponse.classList.remove("hidden");
+    }
+  }
+  type();
+}
+
+  function startEmojiRain() {
+    const rainContainer = document.getElementById("emoji-rain");
+    const emojis = ["❤️", "💖", "💕", "💗", "🫂", "🥰", "💘", "💞"];
+    setInterval(() => {
+      const emoji = document.createElement("div");
+      emoji.className = "emoji-drop";
+      emoji.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+      emoji.style.left = `${Math.random() * 100}%`;
+      emoji.style.fontSize = `${Math.random() * 20 + 20}px`;
+      emoji.style.animationDuration = `${3 + Math.random() * 2}s`;
+      rainContainer.appendChild(emoji);
+      setTimeout(() => emoji.remove(), 5000);
+    }, 200);
+  }
+
+  function sendLoveReply() {
+    const reply = document.getElementById("loveReply").value.trim();
+    if (reply === "") {
+      alert("Don't be shy 😊 Please type your answer first!");
+      return;
+    }
+
+    emailjs.send("service_d8inoee", "template_zzd510q", {
+      message: "Love reply: " + reply,
+      from_name: "Love Letter Website"
+    }).then(() => {
+      document.querySelector(".love-response").innerHTML =
+        "<p style='font-size:1.2em;'>Thank you 🥰 I love you so Much Ma, Pa</p>";
+      showShyHappyEmojis();
+    }).catch((error) => {
+      console.error("Failed to send:", error);
+      alert("Something went wrong 😢 Please try again.");
+    });
+  }
+
+  function showShyHappyEmojis() {
+    const rainContainer = document.getElementById("emoji-rain");
+    const emojis = ["😊", "🥹", "❤️", "💖", "🥰", "🤗"];
+    for (let j = 0; j < 20; j++) {
+      const emoji = document.createElement("div");
+      emoji.className = "emoji-drop";
+      emoji.innerText = emojis[Math.floor(Math.random() * emojis.length)];
+      emoji.style.left = `${Math.random() * 100}%`;
+      emoji.style.fontSize = `${Math.random() * 20 + 20}px`;
+      emoji.style.animationDuration = `${3 + Math.random() * 2}s`;
+      rainContainer.appendChild(emoji);
+      setTimeout(() => emoji.remove(), 5000);
+    }
+  }
+
+  // Attach functions to global window so HTML can use them
+  window.openLetter = openLetter;
+  window.sendLoveReply = sendLoveReply;
+</script>
+
 </body>
 </html>
