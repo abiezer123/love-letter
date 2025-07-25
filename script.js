@@ -52,12 +52,31 @@ function sendLoveReply() {
     return;
   }
 
-  emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
+  emailjs.send("service_d8inoee", "template_zzd510q", {
     action_clicked: "Love reply: " + reply
   }).then(() => {
     console.log("Love response sent:", reply);
-    document.querySelector(".love-response").innerHTML = "<p>Thank you 🥰</p>";
+
+    // Show shy but happy emoji burst
+    const responseBox = document.querySelector(".love-response");
+    responseBox.innerHTML = "<p style='font-size:1.2em;'>Thank you 🥹💖😊</p>";
+
+    for (let j = 0; j < 20; j++) {
+      const emoji = document.createElement("div");
+      emoji.className = "emoji-drop";
+      emoji.innerText = ["😊", "🥹", "❤️", "💖", "🥰", "🤗"][Math.floor(Math.random() * 6)];
+
+      emoji.style.left = `${Math.random() * 100}%`;
+      emoji.style.fontSize = `${Math.random() * 20 + 20}px`;
+      emoji.style.animationDuration = `${3 + Math.random() * 2}s`;
+
+      document.getElementById("emoji-rain").appendChild(emoji);
+
+      setTimeout(() => emoji.remove(), 5000);
+    }
   }).catch((error) => {
     console.error("Failed to send:", error);
+    alert("Something went wrong 😢 Please try again.");
   });
 }
+
